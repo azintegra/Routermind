@@ -2,7 +2,7 @@ let map;
 let addresses = [];
 let optimizedData = [];
 
-const BASE_URL = 'http://127.0.0.1:8000';
+const BASE_URL = 'https://qazws345-routemindapiserver.hf.space';
 // const GRAPH_HOPPER_API_KEY = 'YOUR_API_KEY_HERE'; // Put your actual GraphHopper key
 
 const depots = [
