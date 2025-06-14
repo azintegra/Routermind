@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <title>ROUTEMIND</title>
+    <link rel="stylesheet" href="/styles.css">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+</head>
+<body>
+    <div id="login" class="container">
+        <h1 id="title">ROUTEMIND </h1>
+         <h2 id ="login">Login to Your Account </h2>
+        <form id="loginForm">
+            <input type="text" id="username" placeholder="Username" required>
+            <input type="password" id="password" placeholder="Password" required>
+            <button type="submit">Login</button>
+        </form>
+    </div>
+
+    <div id="main" class="container" style="display: none; height:120px;">
+        <h1 id="title">ROUTEMIND</h1>
+        <input type="file" id="imageInput" accept="image/*">
+        <button id="processBtn" disabled>Process Image</button>
+        <div id="addressList"></div>
+        <div id="extractedAddresses"></div>
+        <button id="optimizeBtn" disabled>Optimize Route</button>
+       
+        <div id="routeList"></div>
+        <div id="optimizedAddresses"></div>
+        <div id="map" style="height: 400px; width: 100%; margin-top: 20px;"></div>
+        <div id="depotSelectContainer"></div>
+         <button id="openMapsBtn" >Open in Google Maps</button>
+
+    </div>
+
+    <script src="config.js"></script>
+    <script src="https://apis.google.com/js/platform.js" async defer></script>
+    <script src="app.js" defer></script>
+</body>
+</html>
