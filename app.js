@@ -2,7 +2,7 @@ let map;
 let addresses = [];
 let optimizedData = [];
 
-const BASE_URL = 'https://qazws345-routemindapiserver.hf.space';
+const BASE_URL = 'https://qazws345-routermindserver.hf.space';
 // const GRAPH_HOPPER_API_KEY = 'YOUR_API_KEY_HERE'; // Put your actual GraphHopper key
 
 const depots = [
@@ -46,36 +46,44 @@ document.addEventListener("DOMContentLoaded", () => {
             alert('Error during login');
         }
     });
+document.getElementById('processBtn').addEventListener('click', async () => {
+    const fileInput = document.getElementById('imageInput');
+    const files = fileInput.files;
+    
+    if (!files || files.length === 0) {
+        alert("Please select at least one image first.");
+        return;
+    }
 
-    document.getElementById('processBtn').addEventListener('click', async () => {
-        const fileInput = document.getElementById('imageInput');
-        const file = fileInput.files[0];
-        if (!file) {
-            alert("Please select an image first.");
-            return;
+    const formData = new FormData();
+    for (let i = 0; i < files.length; i++) {
+        formData.append('files', files[i]);
+    }
+    
+    const username = document.getElementById('username').value;
+    const password = document.getElementById('password').value;
+
+    try {
+        const response = await fetch(`${BASE_URL}/upload`, {
+            method: 'POST',
+            headers: { 'Authorization': 'Basic ' + btoa(`${username}:${password}`) },
+            body: formData
+        });
+
+        if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(errorData.detail || "Error processing images");
         }
 
-        const formData = new FormData();
-        formData.append('file', file);
-        const username = document.getElementById('username').value;
-        const password = document.getElementById('password').value;
-
-        try {
-            const response = await fetch(`${BASE_URL}/upload`, {
-                method: 'POST',
-                headers: { 'Authorization': 'Basic ' + btoa(`${username}:${password}`) },
-                body: formData
-            });
-
-            const data = await response.json();
-            addresses = data.map(item => item.address);
-            showExtractedAddresses(addresses);
-            alert("Image processed successfully.");
-        } catch (err) {
-            console.error("Error processing image:", err);
-            alert("Error processing image.");
-        }
-    });
+        const data = await response.json();
+        addresses = data.map(item => item.address);
+        showExtractedAddresses(data);  // Pass full data to show source file info
+        alert(`${data.length} addresses extracted successfully from ${files.length} files.`);
+    } catch (err) {
+        console.error("Error processing images:", err);
+        alert(err.message || "Error processing images.");
+    }
+});
 
     document.getElementById('optimizeBtn').addEventListener('click', async () => {
         const depotAddress = document.getElementById('depotSelect').value;
@@ -135,12 +143,27 @@ function populateDepotSelector() {
     document.getElementById("main").insertBefore(select, document.getElementById("imageInput"));
 }
 
-function showExtractedAddresses(addresses) {
+
+function showExtractedAddresses(addressData) {
     const extractedDiv = document.getElementById('extractedAddresses');
     extractedDiv.innerHTML = '<h3>Extracted Addresses:</h3>';
-    addresses.forEach((addr, index) => {
-        extractedDiv.innerHTML += `<p>${index + 1}: ${addr}</p>`;
+    
+    // Group by source file
+    const bySource = {};
+    addressData.forEach(item => {
+        if (!bySource[item.source]) {
+            bySource[item.source] = [];
+        }
+        bySource[item.source].push(item.address);
     });
+
+    // Display grouped by file
+    for (const [filename, addrs] of Object.entries(bySource)) {
+        extractedDiv.innerHTML += `<h4>From ${filename}:</h4>`;
+        addrs.forEach((addr, index) => {
+            extractedDiv.innerHTML += `<p>${index + 1}: ${addr}</p>`;
+        });
+    }
 }
 
 async function geocodeAddress(addr) {
@@ -202,4 +225,4 @@ function displayOptimizedRoute(depotCoord, depotAddress, routes) {
         L.polyline(allCoords, { color: 'blue' }).addTo(map);
         map.fitBounds(allCoords);
     }
-}
+} 
