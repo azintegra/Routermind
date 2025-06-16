@@ -2,7 +2,7 @@ let map;
 let addresses = [];
 let optimizedData = [];
 
-const BASE_URL = 'https://qazws345-routermindserver.hf.space';
+const BASE_URL = 'https://fastapi-app-409931981171.europe-west1.run.app';
 // const GRAPH_HOPPER_API_KEY = 'YOUR_API_KEY_HERE'; // Put your actual GraphHopper key
 
 const depots = [
